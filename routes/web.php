@@ -15,7 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
-Route::post('/tasks', [TaskController::class, 'store'])->name('task.store');
+Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

@@ -16,4 +16,16 @@ class TaskController extends Controller
             'tasks' => $tasks,
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:50',
+            'note' => 'required|string|max:800'
+        ]);
+
+        Task::create($request);
+
+        return redirect()->route('task.index')->with('success', 'The task has been saved.');
+    }
 }
