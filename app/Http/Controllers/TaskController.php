@@ -10,7 +10,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::get();
+        $tasks = Task::where('user_id', auth()->id())->get();
 
         return Inertia::render('task', [
             'tasks' => $tasks,
@@ -24,6 +24,8 @@ class TaskController extends Controller
             'description' => 'required|string|max:800'
         ]);
 
+        $tasks['user_id'] = auth()->id();
+
         Task::create($tasks);
 
         return redirect()->route('task.index')->with('success', 'The task has been saved.');
@@ -36,5 +38,13 @@ class TaskController extends Controller
         $task->save();
 
         return redirect()->route('task.index')->with('success', 'The task status has been updated.');
+    }
+
+    public function destroy($id)
+    {
+        $task = Task::findOrfail($id);
+        $task->delete();
+
+        return redirect()->route('task.index')->with('success', 'Task deleted.');
     }
 }
