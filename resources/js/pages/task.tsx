@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormEventHandler } from "react";
-import { useForm } from "@inertiajs/react";
-import { route } from 'ziggy-js';
+import { router, useForm } from "@inertiajs/react";
 
 type Task = {
     id: number;
@@ -33,11 +32,15 @@ export default function Tasks({tasks}: Props) {
     });
 
     const submitTask: FormEventHandler = (e) => {
-        e.preventDefault();
-        post(route('task.store'), {
-            onFinish: () => reset('title', 'description'),
-        });
-    }
+            e.preventDefault();
+            post('/tasks/store', {
+                onFinish: () => reset(),
+            });
+        };
+
+    const toggleTask = (id: number) => {
+        router.put(`/tasks/${id}/toggle`);
+    };
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
@@ -63,6 +66,7 @@ export default function Tasks({tasks}: Props) {
                                                     type="text"
                                                     required
                                                     placeholder="Task Title"
+                                                    value={data.title}
                                                     onChange={(e) => setData('title', e.target.value)}
                                                     disabled={processing}
                                                 />
@@ -96,7 +100,7 @@ export default function Tasks({tasks}: Props) {
                                         <p className={`font-bold ${task.completed ? "opacity-50" : "opacity-100"}`}>{task.title}</p>
                                         <p className={`max-w-xl ${task.completed ? "opacity-50" : "opacity-100"}`}>{task.description}</p>
                                     </div>
-                                    <Button className={`max-w-xl ${task.completed ? "bg-emerald-100" : ""}`} variant="outline">
+                                    <Button onClick={() => toggleTask(task.id)} className={`max-w-xl ${task.completed ? "bg-emerald-100" : ""}`} variant="outline">
                                         <CircleCheck />
                                         {task.completed ? "Completed" : "Complete"}
                                     </Button>
