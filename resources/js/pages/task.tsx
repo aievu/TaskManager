@@ -26,7 +26,7 @@ interface Props extends PageProps {
 
 export default function Tasks({tasks}: Props) {
 
-    const { data, setData, post, processing, errors, reset } = useForm<Required<NewTask>>({
+    const { data, setData, post, processing, reset } = useForm<Required<NewTask>>({
         title: '',
         description: '',
     });
