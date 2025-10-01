@@ -6,6 +6,8 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isEmpty;
+
 class TaskController extends Controller
 {
     public function index()
@@ -46,5 +48,19 @@ class TaskController extends Controller
         $task->delete();
 
         return redirect()->route('task.index')->with('success', 'Task deleted.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:50',
+            'description' => 'required|string|max:800'
+        ]);
+        
+        $task = Task::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        $task->update($data);
+
+        return redirect()->route('task.index')->with('success', 'Task has been updated.');
     }
 }
