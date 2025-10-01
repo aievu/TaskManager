@@ -6,16 +6,21 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-use function PHPUnit\Framework\isEmpty;
-
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::where('user_id', auth()->id())->get();
+        $user = auth()->user()->loadCount([
+            'tasks',
+            'tasks as completed_tasks' => function($query) {
+                $query->where('completed', true);
+            },
+        ]);
 
         return Inertia::render('task', [
-            'tasks' => $tasks,
+            'tasks' => $user->tasks,
+            'tasksCount' => $user->tasks_count,
+            'completedTasks' => $user->completed_tasks_count,
         ]);
     }
 

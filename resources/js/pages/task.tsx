@@ -26,9 +26,11 @@ type HandleTasks = {
 
 interface Props extends PageProps {
     tasks: Task[];
+    tasksCount: number;
+    completedTasks: number;
 }
 
-export default function Tasks({tasks}: Props) {
+export default function Tasks({tasks, tasksCount, completedTasks}: Props) {
 
     const { data, setData, post, processing, errors, reset } = useForm<Required<HandleTasks>>({
         title: '',
@@ -137,6 +139,10 @@ export default function Tasks({tasks}: Props) {
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
+                </div>
+                <div>
+                    <p>Amount: {tasksCount}</p>
+                    <p>Completed: {completedTasks}</p>
                 </div>
                 <div>
                     {tasks.length === 0 ? (
