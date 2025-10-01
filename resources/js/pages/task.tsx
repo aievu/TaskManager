@@ -13,11 +13,14 @@ type Task = {
     title: string;
     description: string;
     completed: boolean;
+    created_at: string;
 }
 
-type NewTask = {
+type HandleTasks = {
     title: string
     description: string;
+    editTitle: string;
+    editDescription: string;
 }
 
 interface Props extends PageProps {
@@ -26,9 +29,11 @@ interface Props extends PageProps {
 
 export default function Tasks({tasks}: Props) {
 
-    const { data, setData, post, processing, reset } = useForm<Required<NewTask>>({
+    const { data, setData, post, processing, reset } = useForm<Required<HandleTasks>>({
         title: '',
         description: '',
+        editTitle: '',
+        editDescription: '',
     });
 
     const [localTasks, setLocalTasks] = useState<Task[]>(tasks);
@@ -36,7 +41,10 @@ export default function Tasks({tasks}: Props) {
     const submitTask: FormEventHandler = (e) => {
         e.preventDefault();
         post('/tasks/store', {
-            onFinish: () => reset(),
+            onSuccess: (page) => {
+                reset();
+                setLocalTasks(page.props.tasks as Task[]);
+            },
         });
     };
 
@@ -55,7 +63,7 @@ export default function Tasks({tasks}: Props) {
     const deleteTask = (id: number) => {
         router.delete(`/tasks/${id}/destroy`, {
             onSuccess: (page) => {
-                setLocalTasks(page.props.tasks);
+                setLocalTasks(page.props.tasks as Task[]);
             },
         });
     };
