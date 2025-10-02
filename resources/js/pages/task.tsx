@@ -104,13 +104,13 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="flex items-center gap-2 text-2xl font-bold mb-4">
+                <h1 className="flex items-center gap-2 text-2xl font-bold">
                     <CircleUser className="w-10 h-10" />
                     {user.name}
                 </h1>
                 <Button variant="outline">
                     <Link
-                        className="flex items-center"
+                        className="flex items-center cursor-pointer"
                         href={logout()}
                         as="button"
                         onClick={handleLogout}
@@ -126,7 +126,7 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                     <h1 className="text-2xl font-bold">My Tasks</h1>
                     <Dialog>
                         <DialogTrigger>
-                            <Button>
+                            <Button className="cursor-pointer">
                                 <PlusCircle />
                                 New Task
                             </Button>
@@ -179,12 +179,12 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                     ) : (
                         <div className="flex flex-col gap-2 ">
                             {localTasks.map((task) => (
-                                <div key={task.id} className={`flex justify-between items-center gap-2 border rounded p-2 ${task.completed ? "scale-95" : ""}`}>
+                                <div key={task.id} className={`flex justify-between items-center gap-2 border rounded p-2 ${task.completed ? "transition-all duration-300 transform scale-95" : "transition-all duration-300 transform"}`}>
                                     <div className="flex gap-5 items-center">
                                         <div className="flex flex-col gap-1">
                                             <Dialog>
                                                 <DialogTrigger>
-                                                    <Button className="w-6 h-6 bg-red-400">
+                                                    <Button className="w-6 h-6 bg-red-400 cursor-pointer">
                                                         <TrashIcon />
                                                     </Button>
                                                 </DialogTrigger>
@@ -202,7 +202,7 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                                             </Dialog>
                                             <Dialog>
                                                 <DialogTrigger>
-                                                    <Button className="w-6 h-6" onClick={() => {
+                                                    <Button className="w-6 h-6 cursor-pointer" onClick={() => {
                                                         setTaskEditing(task);
                                                         setData("editTitle", task.title);
                                                         setData("editDescription", task.description);
@@ -253,11 +253,11 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                                             </Dialog>
                                         </div>
                                         <div>
-                                            <p className={`font-bold ${task.completed ? "opacity-50" : "opacity-100"}`}>{task.title}</p>
-                                            <p className={`max-w-xl ${task.completed ? "opacity-50" : "opacity-100"}`}>{task.description}</p>
+                                            <p className={`font-bold ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.title}</p>
+                                            <p className={`max-w-xl ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.description}</p>
                                         </div>
                                     </div>
-                                    <Button onClick={() => toggleTask(task.id)} className={`max-w-xl ${task.completed ? "bg-emerald-200" : ""}`} variant="outline">
+                                    <Button onClick={() => toggleTask(task.id)} className={`max-w-xl ${task.completed ? "bg-emerald-200 cursor-pointer" : "cursor-pointer"}`} variant="outline">
                                         <CircleCheck />
                                         {task.completed ? "" : "Complete"}
                                     </Button>
