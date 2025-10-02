@@ -18,6 +18,7 @@ class TaskController extends Controller
         ]);
 
         return Inertia::render('task', [
+            'user' => $user,
             'tasks' => $user->tasks,
             'tasksCount' => $user->tasks_count,
             'completedTasks' => $user->completed_tasks_count,

@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { CircleCheck, Edit3Icon, PlusCircle, TrashIcon } from "lucide-react";
+import { BookCheck, CircleCheck, CircleUser, Edit3Icon, LogOut, PlusCircle, TrashIcon } from "lucide-react";
 import { PageProps } from '@inertiajs/core';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormEventHandler, useState } from "react";
-import { router, useForm } from "@inertiajs/react";
+import { Link, router, useForm } from "@inertiajs/react";
 import InputError from "@/components/input-error";
+import { logout } from '@/routes';
+import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+
 
 type Task = {
     id: number;
@@ -27,10 +30,12 @@ type HandleTasks = {
 interface Props extends PageProps {
     tasks: Task[];
     tasksCount: number;
-    completedTasks: number;
+    user: {
+        name: string;
+    }
 }
 
-export default function Tasks({tasks, tasksCount, completedTasks}: Props) {
+export default function Tasks({user, tasks, tasksCount}: Props) {
 
     const { data, setData, post, processing, errors, reset } = useForm<Required<HandleTasks>>({
         title: '',
@@ -89,8 +94,33 @@ export default function Tasks({tasks, tasksCount, completedTasks}: Props) {
         });
     };
 
+    const cleanup = useMobileNavigation();
+    
+    const handleLogout = () => {
+        cleanup();
+        router.flushAll();
+    };
+
     return (
         <div className="p-6 max-w-4xl mx-auto">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="flex items-center gap-2 text-2xl font-bold mb-4">
+                    <CircleUser className="w-10 h-10" />
+                    {user.name}
+                </h1>
+                <Button variant="outline">
+                    <Link
+                        className="flex items-center"
+                        href={logout()}
+                        as="button"
+                        onClick={handleLogout}
+                        data-test="logout-button"
+                    >
+                        <LogOut className="mr-2" />
+                        Log out
+                    </Link>
+                </Button>
+            </div>
             <div className="flex flex-col gap-5 border rounded-lg p-3">
                 <div className="flex justify-between">
                     <h1 className="text-2xl font-bold">My Tasks</h1>
@@ -140,9 +170,8 @@ export default function Tasks({tasks, tasksCount, completedTasks}: Props) {
                         </DialogContent>
                     </Dialog>
                 </div>
-                <div>
-                    <p>Amount: {tasksCount}</p>
-                    <p>Completed: {completedTasks}</p>
+                <div className="flex">
+                    <p className="flex gap-2 rounded p-1"><BookCheck /> Amount: {tasksCount}</p>
                 </div>
                 <div>
                     {tasks.length === 0 ? (
