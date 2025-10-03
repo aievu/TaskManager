@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-O TaskManager é um sistema para gerenciamento de tarefas, desenvolvido com Laravel e React, que visa facilitar o controle, organização e segurança das atividades dosdd  usuários.
+O TaskManager é um sistema para gerenciamento de tarefas, desenvolvido com Laravel e React, que visa facilitar o controle, organização e segurança das atividades dos usuários.
 ---
 
 ## Funcionalidades
