@@ -10,6 +10,7 @@ import { Link, router, useForm } from "@inertiajs/react";
 import InputError from "@/components/input-error";
 import { logout } from '@/routes';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 
 type Task = {
@@ -35,7 +36,7 @@ interface Props extends PageProps {
     }
 }
 
-export default function Tasks({user, tasks, tasksCount}: Props) {
+export default function Tasks({ user, tasks, tasksCount }: Props) {
 
     const { data, setData, post, processing, errors, reset } = useForm<Required<HandleTasks>>({
         title: '',
@@ -95,7 +96,7 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
     };
 
     const cleanup = useMobileNavigation();
-    
+
     const handleLogout = () => {
         cleanup();
         router.flushAll();
@@ -134,38 +135,38 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Writing Task</DialogTitle>
-                                    <DialogDescription>
-                                        <form onSubmit={submitTask} method="POST" className="grid gap-2">
-                                            <div className="grid gap-2">
-                                                <div>
-                                                    <Label>Title</Label>
-                                                    <Input
-                                                        id="title"
-                                                        type="text"
-                                                        required
-                                                        placeholder="Task Title"
-                                                        value={data.title}
-                                                        onChange={(e) => setData('title', e.target.value)}
-                                                        disabled={processing}
-                                                    />
-                                                    <InputError message={errors.title} />
-                                                </div>
-                                                <div>
-                                                    <Label>Description</Label>
-                                                    <Textarea
-                                                        id="description"
-                                                        required
-                                                        value={data.description}
-                                                        placeholder="Task Description"
-                                                        onChange={(e) => setData('description', e.target.value)}
-                                                        disabled={processing}
-                                                    />
-                                                    <InputError message={errors.description} />
-                                                </div>
+                                <DialogDescription>
+                                    <form onSubmit={submitTask} method="POST" className="grid gap-2">
+                                        <div className="grid gap-2">
+                                            <div>
+                                                <Label>Title</Label>
+                                                <Input
+                                                    id="title"
+                                                    type="text"
+                                                    required
+                                                    placeholder="Task Title"
+                                                    value={data.title}
+                                                    onChange={(e) => setData('title', e.target.value)}
+                                                    disabled={processing}
+                                                />
+                                                <InputError message={errors.title} />
                                             </div>
-                                            <Button disabled={processing} type="submit">Write Task</Button>
-                                        </form>
-                                    </DialogDescription>
+                                            <div>
+                                                <Label>Description</Label>
+                                                <Textarea
+                                                    id="description"
+                                                    required
+                                                    value={data.description}
+                                                    placeholder="Task Description"
+                                                    onChange={(e) => setData('description', e.target.value)}
+                                                    disabled={processing}
+                                                />
+                                                <InputError message={errors.description} />
+                                            </div>
+                                        </div>
+                                        <Button disabled={processing} type="submit">Write Task</Button>
+                                    </form>
+                                </DialogDescription>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
@@ -182,79 +183,93 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                                 <div key={task.id} className={`flex justify-between items-center gap-2 border rounded p-2 ${task.completed ? "transition-all duration-300 transform scale-95" : "transition-all duration-300 transform"}`}>
                                     <div className="flex gap-5 items-center">
                                         <div className="flex flex-col gap-1">
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Button className="w-6 h-6 bg-red-400 cursor-pointer">
-                                                        <TrashIcon />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Deleting Task</DialogTitle>
-                                                        <DialogDescription>
-                                                            <div className="grid gap-2">
-                                                                <p>Are you sure? This action in not reversible.</p>
-                                                                <Button disabled={processing} onClick={() => deleteTask(task.id)} variant="destructive">Delete Task</Button>
-                                                            </div>
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-                                                </DialogContent>
-                                            </Dialog>
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Button className="w-6 h-6 cursor-pointer" onClick={() => {
-                                                        setTaskEditing(task);
-                                                        setData("editTitle", task.title);
-                                                        setData("editDescription", task.description);
-                                                    }}>
-                                                        <Edit3Icon />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Editing Task</DialogTitle>
-                                                            <DialogDescription>
-                                                                <form onSubmit={editTask} method="POST" className="grid gap-2">
-                                                                    <div className="grid gap-2">
-                                                                        <div>
-                                                                            <Label>Title</Label>
-                                                                            <Input
-                                                                                id="editTitle"
-                                                                                type="text"
-                                                                                required
-                                                                                placeholder="Task Title"
-                                                                                value={data.editTitle}
-                                                                                onChange={(e) => setData('editTitle', e.target.value)}
-                                                                                disabled={processing}
-                                                                            />
-                                                                            <InputError message={errors.editTitle} />
-                                                                        </div>
-                                                                        <div>
-                                                                            <Label>Description</Label>
-                                                                            <Textarea
-                                                                                id="editDescription"
-                                                                                required
-                                                                                value={data.editDescription}
-                                                                                placeholder="Task Description"
-                                                                                onChange={(e) => setData('editDescription', e.target.value)}
-                                                                                disabled={processing}
-                                                                            />
-                                                                            <InputError message={errors.editDescription} />
-                                                                        </div>
-                                                                    </div>
-                                                                    <DialogClose className="grid">
-                                                                        <Button disabled={processing} type="submit">Edit Task</Button>
-                                                                    </DialogClose>
-
-                                                                </form>
-                                                            </DialogDescription>
-                                                    </DialogHeader>
-                                                </DialogContent>
-                                            </Dialog>
                                         </div>
                                         <div>
-                                            <p className={`font-bold ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.title}</p>
-                                            <p className={`max-w-xl ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.description}</p>
+                                            <Accordion
+                                                type="single"
+                                                collapsible
+                                                className="w-full"
+                                            >
+                                                <AccordionItem value="item-1">
+                                                    <AccordionTrigger>
+                                                        <p className={`font-bold ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.title}</p>
+                                                    </AccordionTrigger>
+                                                    <AccordionContent className="w-full">
+                                                        <p className={`whitespace-pre-wrap ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.description}</p>
+                                                        <div className="flex gap-2 mt-2">
+                                                            <Dialog>
+                                                                <DialogTrigger>
+                                                                    <Button className="w-10 h-6 bg-red-400 cursor-pointer">
+                                                                        <TrashIcon />
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Deleting Task</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            <div className="grid gap-2">
+                                                                                <p>Are you sure? This action in not reversible.</p>
+                                                                                <Button disabled={processing} onClick={() => deleteTask(task.id)} variant="destructive">Delete Task</Button>
+                                                                            </div>
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                            <Dialog>
+                                                                <DialogTrigger>
+                                                                    <Button className="w-10 h-6 cursor-pointer" onClick={() => {
+                                                                        setTaskEditing(task);
+                                                                        setData("editTitle", task.title);
+                                                                        setData("editDescription", task.description);
+                                                                    }}>
+                                                                        <Edit3Icon />
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Editing Task</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            <form onSubmit={editTask} method="POST" className="grid gap-2">
+                                                                                <div className="grid gap-2">
+                                                                                    <div>
+                                                                                        <Label>Title</Label>
+                                                                                        <Input
+                                                                                            id="editTitle"
+                                                                                            type="text"
+                                                                                            required
+                                                                                            placeholder="Task Title"
+                                                                                            value={data.editTitle}
+                                                                                            onChange={(e) => setData('editTitle', e.target.value)}
+                                                                                            disabled={processing}
+                                                                                        />
+                                                                                        <InputError message={errors.editTitle} />
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <Label>Description</Label>
+                                                                                        <Textarea
+                                                                                            id="editDescription"
+                                                                                            required
+                                                                                            value={data.editDescription}
+                                                                                            placeholder="Task Description"
+                                                                                            onChange={(e) => setData('editDescription', e.target.value)}
+                                                                                            disabled={processing}
+                                                                                        />
+                                                                                        <InputError message={errors.editDescription} />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <DialogClose className="grid">
+                                                                                    <Button disabled={processing} type="submit">Edit Task</Button>
+                                                                                </DialogClose>
+
+                                                                            </form>
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        </div>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            </Accordion>
                                         </div>
                                     </div>
                                     <Button onClick={() => toggleTask(task.id)} className={`max-w-xl ${task.completed ? "bg-emerald-200 cursor-pointer" : "cursor-pointer"}`} variant="outline">
@@ -262,7 +277,7 @@ export default function Tasks({user, tasks, tasksCount}: Props) {
                                         {task.completed ? "" : "Complete"}
                                     </Button>
                                 </div>
-                            ))} 
+                            ))}
                         </div>
                     )}
                 </div>
