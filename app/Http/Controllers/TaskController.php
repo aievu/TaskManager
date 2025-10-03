@@ -12,16 +12,12 @@ class TaskController extends Controller
     {
         $user = auth()->user()->loadCount([
             'tasks',
-            'tasks as completed_tasks' => function($query) {
-                $query->where('completed', true);
-            },
         ]);
 
         return Inertia::render('task', [
             'user' => $user,
             'tasks' => $user->tasks,
             'tasksCount' => $user->tasks_count,
-            'completedTasks' => $user->completed_tasks_count,
         ]);
     }
 

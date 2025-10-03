@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BookCheck, CircleCheck, CircleUser, Edit3Icon, LogOut, PlusCircle, TrashIcon } from "lucide-react";
+import { BookCheck, CircleCheck, CircleUser, Edit3Icon, LoaderCircle, LogOut, PlusCircle, TrashIcon } from "lucide-react";
 import { PageProps } from '@inertiajs/core';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -164,118 +164,133 @@ export default function Tasks({ user, tasks, tasksCount }: Props) {
                                                 <InputError message={errors.description} />
                                             </div>
                                         </div>
-                                        <Button disabled={processing} type="submit">Write Task</Button>
+                                        <Button disabled={processing} type="submit">
+                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                            Write Task
+                                        </Button>
                                     </form>
                                 </DialogDescription>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
-                </div>
-                <div className="flex">
-                    <p className="flex gap-2 rounded p-1"><BookCheck /> Amount: {tasksCount}</p>
-                </div>
+                </div>{tasks.length === 0 ? (
+                    <div className="flex">
+                        <p className="flex gap-2 rounded p-1"><BookCheck />You have no tasks yet.</p>
+                    </div>
+                ) : (
+                    <div className="flex">
+                        <p className="flex gap-2 rounded p-1"><BookCheck /> Amount: {tasksCount}</p>
+                    </div>
+                )}
                 <div>
-                    {tasks.length === 0 ? (
-                        <p>You have no tasks yet.</p>
-                    ) : (
+                    {tasks.length > 0 && (
                         <div className="flex flex-col gap-2 ">
                             {localTasks.map((task) => (
-                                <div key={task.id} className={`flex justify-between items-center gap-2 border rounded p-2 ${task.completed ? "transition-all duration-300 transform scale-95" : "transition-all duration-300 transform"}`}>
-                                    <div className="flex gap-5 items-center">
-                                        <div className="flex flex-col gap-1">
-                                        </div>
-                                        <div>
-                                            <Accordion
-                                                type="single"
-                                                collapsible
-                                                className="w-full"
-                                            >
-                                                <AccordionItem value="item-1">
-                                                    <AccordionTrigger>
-                                                        <p className={`font-bold ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.title}</p>
-                                                    </AccordionTrigger>
-                                                    <AccordionContent className="w-full">
-                                                        <p className={`whitespace-pre-wrap ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.description}</p>
-                                                        <div className="flex gap-2 mt-2">
-                                                            <Dialog>
-                                                                <DialogTrigger>
-                                                                    <Button className="w-10 h-6 bg-red-400 cursor-pointer">
-                                                                        <TrashIcon />
-                                                                    </Button>
-                                                                </DialogTrigger>
-                                                                <DialogContent>
-                                                                    <DialogHeader>
-                                                                        <DialogTitle>Deleting Task</DialogTitle>
-                                                                        <DialogDescription>
-                                                                            <div className="grid gap-2">
-                                                                                <p>Are you sure? This action in not reversible.</p>
-                                                                                <Button disabled={processing} onClick={() => deleteTask(task.id)} variant="destructive">Delete Task</Button>
-                                                                            </div>
-                                                                        </DialogDescription>
-                                                                    </DialogHeader>
-                                                                </DialogContent>
-                                                            </Dialog>
-                                                            <Dialog>
-                                                                <DialogTrigger>
-                                                                    <Button className="w-10 h-6 cursor-pointer" onClick={() => {
-                                                                        setTaskEditing(task);
-                                                                        setData("editTitle", task.title);
-                                                                        setData("editDescription", task.description);
-                                                                    }}>
-                                                                        <Edit3Icon />
-                                                                    </Button>
-                                                                </DialogTrigger>
-                                                                <DialogContent>
-                                                                    <DialogHeader>
-                                                                        <DialogTitle>Editing Task</DialogTitle>
-                                                                        <DialogDescription>
-                                                                            <form onSubmit={editTask} method="POST" className="grid gap-2">
-                                                                                <div className="grid gap-2">
-                                                                                    <div>
-                                                                                        <Label>Title</Label>
-                                                                                        <Input
-                                                                                            id="editTitle"
-                                                                                            type="text"
-                                                                                            required
-                                                                                            placeholder="Task Title"
-                                                                                            value={data.editTitle}
-                                                                                            onChange={(e) => setData('editTitle', e.target.value)}
-                                                                                            disabled={processing}
-                                                                                        />
-                                                                                        <InputError message={errors.editTitle} />
+                                <div key={task.id} className={`flex justify-between items-center gap-2 border rounded px-2 ${task.completed ? "transition-all duration-300 transform scale-95" : "transition-all duration-300 transform"}`}>
+                                    <div className="w-full flex">
+                                        <div className="w-full flex gap-5 items-center">
+                                            <div>
+                                                <Accordion
+                                                    type="single"
+                                                    collapsible
+                                                    className="w-full"
+                                                >
+                                                    <AccordionItem value="item-1">
+                                                        <AccordionTrigger>
+                                                            <p className={`font-bold ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.title}</p>
+                                                        </AccordionTrigger>
+                                                        <AccordionContent className="w-full">
+                                                            <p className={`whitespace-pre-wrap ${task.completed ? "opacity-50 transition-all duration-300 transform" : "transition-all duration-300 transform opacity-100"}`}>{task.description}</p>
+                                                            <div className="mt-2">
+                                                                <div className="flex gap-2">
+                                                                    <Dialog>
+                                                                        <DialogTrigger>
+                                                                            <Button className="w-10 h-6 bg-red-400 cursor-pointer">
+                                                                                <TrashIcon />
+                                                                            </Button>
+                                                                        </DialogTrigger>
+                                                                        <DialogContent>
+                                                                            <DialogHeader>
+                                                                                <DialogTitle>Deleting Task</DialogTitle>
+                                                                                <DialogDescription>
+                                                                                    <div className="grid gap-2">
+                                                                                        <p>Are you sure? This action in not reversible.</p>
+                                                                                        <Button className="cursor-pointer" disabled={processing} onClick={() => deleteTask(task.id)} variant="destructive">
+                                                                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                                                                            Delete Task
+                                                                                        </Button>
                                                                                     </div>
-                                                                                    <div>
-                                                                                        <Label>Description</Label>
-                                                                                        <Textarea
-                                                                                            id="editDescription"
-                                                                                            required
-                                                                                            value={data.editDescription}
-                                                                                            placeholder="Task Description"
-                                                                                            onChange={(e) => setData('editDescription', e.target.value)}
-                                                                                            disabled={processing}
-                                                                                        />
-                                                                                        <InputError message={errors.editDescription} />
-                                                                                    </div>
-                                                                                </div>
-                                                                                <DialogClose className="grid">
-                                                                                    <Button disabled={processing} type="submit">Edit Task</Button>
-                                                                                </DialogClose>
+                                                                                </DialogDescription>
+                                                                            </DialogHeader>
+                                                                        </DialogContent>
+                                                                    </Dialog>
+                                                                    <Dialog>
+                                                                        <DialogTrigger>
+                                                                            <Button className="w-15 h-6 cursor-pointer" onClick={() => {
+                                                                                setTaskEditing(task);
+                                                                                setData("editTitle", task.title);
+                                                                                setData("editDescription", task.description);
+                                                                            }}>
+                                                                                <Edit3Icon />
+                                                                            </Button>
+                                                                        </DialogTrigger>
+                                                                        <DialogContent>
+                                                                            <DialogHeader>
+                                                                                <DialogTitle>Editing Task</DialogTitle>
+                                                                                <DialogDescription>
+                                                                                    <form onSubmit={editTask} method="POST" className="grid gap-2">
+                                                                                        <div className="grid gap-2">
+                                                                                            <div>
+                                                                                                <Label>Title</Label>
+                                                                                                <Input
+                                                                                                    id="editTitle"
+                                                                                                    type="text"
+                                                                                                    required
+                                                                                                    placeholder="Task Title"
+                                                                                                    value={data.editTitle}
+                                                                                                    onChange={(e) => setData('editTitle', e.target.value)}
+                                                                                                    disabled={processing}
+                                                                                                />
+                                                                                                <InputError message={errors.editTitle} />
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <Label>Description</Label>
+                                                                                                <Textarea
+                                                                                                    id="editDescription"
+                                                                                                    required
+                                                                                                    value={data.editDescription}
+                                                                                                    placeholder="Task Description"
+                                                                                                    onChange={(e) => setData('editDescription', e.target.value)}
+                                                                                                    disabled={processing}
+                                                                                                />
+                                                                                                <InputError message={errors.editDescription} />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <DialogClose className="grid">
+                                                                                            <Button className="cursor-pointer" disabled={processing} type="submit">
+                                                                                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                                                                                Edit Task
+                                                                                            </Button>
+                                                                                        </DialogClose>
 
-                                                                            </form>
-                                                                        </DialogDescription>
-                                                                    </DialogHeader>
-                                                                </DialogContent>
-                                                            </Dialog>
-                                                        </div>
-                                                    </AccordionContent>
-                                                </AccordionItem>
-                                            </Accordion>
+                                                                                    </form>
+                                                                                </DialogDescription>
+                                                                            </DialogHeader>
+                                                                        </DialogContent>
+                                                                    </Dialog>
+                                                                </div>
+                                                                <small className="text-gray-500">Created: {new Date(task.created_at).toLocaleDateString()}</small>
+                                                            </div>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                </Accordion>
+                                            </div>
                                         </div>
+                                        <Button onClick={() => toggleTask(task.id)} className={`mt-2 ${task.completed ? "bg-emerald-200 cursor-pointer" : "cursor-pointer"}`} variant="outline">
+                                            <CircleCheck />
+                                            {task.completed ? "" : "Complete"}
+                                        </Button>
                                     </div>
-                                    <Button onClick={() => toggleTask(task.id)} className={`max-w-xl ${task.completed ? "bg-emerald-200 cursor-pointer" : "cursor-pointer"}`} variant="outline">
-                                        <CircleCheck />
-                                        {task.completed ? "" : "Complete"}
-                                    </Button>
                                 </div>
                             ))}
                         </div>
