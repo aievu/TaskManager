@@ -82,7 +82,10 @@ Inicie o servidor de desenvolvimento:
 ```sh
 composer run dev
 ```
-
+ou
+```sh
+php artisan serve
+```
 Acesse o aplicativo em `http://127.0.0.1:8000/`.
 
 ---
